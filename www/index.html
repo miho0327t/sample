@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+    <html>
+    <head>
+        <title>Barcode Scanner DEMO</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <script src="components/loader.js"></script>
+        <link rel="stylesheet" href="components/loader.css">
+
+        <script type="text/javascript">
+
+        function getPath(){
+             var str = location.pathname;
+             var i = str.lastIndexOf('/');
+             return str.substring(0,i+1);
+         }
+         
+         function onSuccess() {
+              //console.log("playAudio():Audio Success");
+         }
+
+         function onError(error) {
+            alert('code: '    + error.code    + '\n' +
+                  'message: ' + error.message + '\n');
+         }
+
+        function scanBarcode() {
+            window.plugins.barcodeScanner.scan( function(result) {
+
+                    ret = result.text;
+                    val = ret.slice(ret.lastIndexOf("/")+1);
+                    val = val.replace("+", "_");
+                    //alert(val);
+                    
+                    src = getPath() + "media/a-z/" + val + ".mp3";
+                    //alert(src);
+                    media = new Media (src , onSuccess, onError);
+                    media.play();
+                    
+                    scanBarcode();
+                    
+                }, function(error) {
+                    alert("Scanning failed: " + error);
+                }
+            );
+
+        }
+        
+        
+        
+        </script>
+    </head>
+
+    <body>
+    <hr> BarcodeReader DEMO <hr><br>
+    <input type="button" style="width: 200px; height: 200px" onClick ="scanBarcode()" value ="Scan" />
+    </body>
+    </html>
+    
