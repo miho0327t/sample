@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+    <html>
+      <head>
+       <meta charset="utf-8"> 
+        <script type="text/javascript" src="components/loader.js"></script>
+        <script type="text/javascript" charset="utf-8">
+
+        var VandFAry = new Array("apple","ball","cat","carrot","cherry","corn","cucumber","eggplant","garlic","grapes","green_pepper","lemon","lettus","melon","mushroom","nuts","onion","orange","peach","persimmon","pineapple","potato","pumpkin","radish","red_pepper","spicach","strowberry","sweet_potato","tomato","vegetables","water_melon"); //野菜＆果物リスト
+
+        var target = null;
+        var targetCounter = 0;
+        
+        document.addEventListener("deviceready", onDeviceReady, false);
+        
+        var titleMessage = '<a onclick="callExe()";><h2><p id="titleMessage">Fruit And Vegetables' + '[ ### / ' + (VandFAry.length) + ' ] </a>　　　<font size="5" color="red"><a onclick="location.reload();">reflesh</a></font></p></h2>';
+        document.write(titleMessage.replace("###",targetCounter));
+        document.getElementById('titleMessage').innerHTML = titleMessage.replace("###",targetCounter);
+        var img_tag  = '<img width="24%" height="24%" onclick="playAudioObj(this);" id="###NAME###" src="###IMG###">';
+        var path = 'image/';
+        for(i=0; i < VandFAry.length; i++){
+            document.write( (img_tag.replace('###NAME###', 'index' + (i+1) ) ).replace('###IMG###', (path + VandFAry[i] + '.jpg') )); 
+        }
+        
+        function callExe() {
+            if(target == null || (targetCounter >= (VandFAry.length))){
+                targetCounter = 0;
+                target = shuffle(VandFAry);
+            }
+            playAudioVal((path + target[targetCounter] + '.mp3'));
+            targetCounter = targetCounter + 1; 
+            document.getElementById('titleMessage').innerHTML = titleMessage.replace("###",targetCounter);
+        }
+        
+        //This function is used to specify an absolute path of an mp3 file to be played in a project on Android.
+        function getPath() {
+            var str = location.pathname;
+            var i = str.lastIndexOf('/');
+            return str.substring(0,i+1);
+        }
+        
+        function onDeviceReady() {
+            //window.alert("Loading PhoneGap is completed");
+        }
+        
+        function shuffle(array) {
+          var n = array.length, t, i;
+        
+          while (n) {
+            i = Math.floor(Math.random() * n--);
+            t = array[n];
+            array[n] = array[i];
+            array[i] = t;
+          }
+        
+          return array;
+        }
+
+        var media = null;
+        var mediaTimer = null;
+
+        function playAudioObj(obj) {
+            var indexId = obj.getAttribute('id');
+            var index = Number(indexId.replace('index',''));
+            var val = obj.getAttribute('src').replace('jpg','mp3');
+            val = val.replace('images/zzOKzz', path + VandFAry[index-1]);
+            playAudioVal(val);
+            document.getElementById(indexId).src = 'images/zzOKzz.jpg';
+        }
+        
+        function playAudioVal(val) {
+            if(media){
+                return;
+            }
+            media = new Media (getPath() + val , onSuccess, onError);
+            media.setVolume('3.0');
+            media.play({ numberOfLoops: 1 })
+            media = null;
+        }
+
+        function stopAudio() {
+
+            if (media) {
+                media.stop();
+                media.release();
+                media = null;
+            }
+
+            clearInterval(mediaTimer);
+            mediaTimer = null;
+        }
+
+          //A success callback function displaying a success message.
+          function onSuccess() {
+              console.log("playAudio():Audio Success");
+          }
+
+          //A callback function in case of failure
+          function onError(error) {
+              alert('code: '    + error.code    + '\n' + 
+                    'message: ' + error.message + '\n');
+          }
+
+          //Set the position of audio playback
+          function setAudioPosition(position) {
+              document.getElementById('audio_position').innerHTML = position;
+          }
+
+          </script>
+        </head>
+      <body>
+<!--
+      <h1>Fruit And Vegetables</h1>
+        <img width="24%" height="24%" onclick="playAudio(this);" id="button" src="images/VandF/apple.jpg" >
+        <img width="24%" height="24%" onclick="playAudio(this);" id="button" src="images/VandF/banana.jpg">
+        <img width="24%" height="24%" onclick="playAudio(this);" id="button" src="images/VandF/carrot.jpg" >
+        <img width="24%" height="24%" onclick="playAudio(this);" id="button" src="images/VandF/cucumber.jpg">
+        <img width="24%" height="24%" onclick="playAudio(this);" id="button" src="images/VandF/eggplant.jpg" >
+        <img width="24%" height="24%" onclick="playAudio(this);" id="button" src="images/VandF/grapes.jpg">
+        <img width="24%" height="24%" onclick="playAudio(this);" id="button" src="images/VandF/lemon.jpg">
+-->
+        <p id="audio_position"></p><br/>
+      </body>
+    </html> 
